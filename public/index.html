@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Inventory Management</h1>
+
+        <div class="form-container">
+            <h2 id="form-title">Add New Item</h2>
+            <form id="item-form">
+                <input type="hidden" id="item-id">
+                <div class="input-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="input-group">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" required>
+                </div>
+                <div class="input-group">
+                    <label for="price">Price:</label>
+                    <input type="number" step="0.01" id="price">
+                </div>
+                <button type="submit" id="submit-btn">Add Item</button>
+                <button type="button" id="cancel-btn" style="display: none;">Cancel</button>
+            </form>
+        </div>
+
+        <div class="inventory-list">
+            <h2>Inventory List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-tbody">
+                    <!-- Items will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
