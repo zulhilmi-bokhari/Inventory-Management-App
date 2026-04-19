@@ -1,14 +1,14 @@
 # Inventory Management App
 
-A simple, lightweight web application for managing inventory. Built with Node.js, Express, and vanilla JavaScript.
+A simple, lightweight web application for managing inventory, including stock replenishment tracking from the store room.
 
 ## Features
 
-- **View Inventory**: See a list of all items with their ID, name, quantity, and price.
-- **Add Items**: Add new items to the inventory via a simple form.
-- **Edit Items**: Update the details of existing items.
-- **Delete Items**: Remove items from the inventory.
-- **Persistent Backend**: Uses an Express server with an in-memory inventory (data resets on server restart).
+- **View Inventory**: See a list of all items with their ID, name, quantity, price, and Person in Charge.
+- **Add/Edit Items**: Manage inventory items and assign responsible persons.
+- **Delete Items**: Remove items from the system.
+- **Stock Replenishment**: Log stock additions from the store room to the kiosk, specifying the person responsible.
+- **Replenishment Summary**: A dedicated report page showing monthly contributions to stock replenishment by person.
 
 ## Tech Stack
 
@@ -25,8 +25,7 @@ A simple, lightweight web application for managing inventory. Built with Node.js
 
 ### Installation
 
-1. Clone the repository (if applicable) or copy the files.
-2. Install dependencies:
+1. Install dependencies:
    ```bash
    npm install
    ```
@@ -42,10 +41,10 @@ A simple, lightweight web application for managing inventory. Built with Node.js
 ### Running Tests
 
 To run the end-to-end Playwright tests:
-1. Ensure the server is running (`npm start`).
-2. In a separate terminal, run:
+1. Ensure the server is running.
+2. Run:
    ```bash
-   npx playwright test
+   npm test
    ```
 
 ## License

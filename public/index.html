@@ -10,6 +10,11 @@
     <div class="container">
         <h1>Inventory Management</h1>
 
+        <nav>
+            <a href="index.html">Inventory</a> |
+            <a href="summary.html">Replenishment Summary</a>
+        </nav>
+
         <div class="form-container">
             <h2 id="form-title">Add New Item</h2>
             <form id="item-form">
@@ -26,6 +31,10 @@
                     <label for="price">Price:</label>
                     <input type="number" step="0.01" id="price">
                 </div>
+                <div class="input-group">
+                    <label for="personInCharge">Person in Charge:</label>
+                    <input type="text" id="personInCharge">
+                </div>
                 <button type="submit" id="submit-btn">Add Item</button>
                 <button type="button" id="cancel-btn" style="display: none;">Cancel</button>
             </form>
@@ -40,6 +49,7 @@
                         <th>Name</th>
                         <th>Quantity</th>
                         <th>Price</th>
+                        <th>Person in Charge</th>
                         <th>Actions</th>
                     </tr>
                 </thead>

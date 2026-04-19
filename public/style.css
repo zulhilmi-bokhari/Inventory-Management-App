@@ -58,8 +58,18 @@ button {
     color: white;
 }
 
+nav {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
 .edit-btn {
     background-color: #ffc107;
+}
+
+.replenish-btn {
+    background-color: #17a2b8;
+    color: white;
 }
 
 .delete-btn {
