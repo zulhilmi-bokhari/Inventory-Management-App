@@ -3,6 +3,21 @@ const inventoryTbody = document.getElementById('inventory-tbody');
 const formTitle = document.getElementById('form-title');
 const submitBtn = document.getElementById('submit-btn');
 const cancelBtn = document.getElementById('cancel-btn');
+const logoutBtn = document.getElementById('logout-btn');
+const displayName = document.getElementById('display-name');
+
+// Check login status
+const currentUser = JSON.parse(localStorage.getItem('inventory_user'));
+if (!currentUser) {
+    window.location.href = 'login.html';
+} else {
+    displayName.innerText = `Welcome, ${currentUser.name}`;
+}
+
+logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('inventory_user');
+    window.location.href = 'login.html';
+});
 
 let items = [];
 
@@ -21,7 +36,7 @@ function renderItems() {
             <td>${item.id}</td>
             <td>${item.name}</td>
             <td>${item.quantity}</td>
-            <td>$${item.price.toFixed(2)}</td>
+            <td>${item.sku}</td>
             <td>${item.personInCharge}</td>
             <td>
                 <button class="edit-btn" onclick="editItem(${item.id})">Edit</button>
@@ -39,10 +54,10 @@ itemForm.addEventListener('submit', async (e) => {
     const id = document.getElementById('item-id').value;
     const name = document.getElementById('name').value;
     const quantity = document.getElementById('quantity').value;
-    const price = document.getElementById('price').value;
+    const sku = document.getElementById('sku').value;
     const personInCharge = document.getElementById('personInCharge').value;
 
-    const itemData = { name, quantity, price, personInCharge };
+    const itemData = { name, quantity, sku, personInCharge };
 
     if (id) {
         // Update
@@ -70,7 +85,7 @@ function editItem(id) {
         document.getElementById('item-id').value = item.id;
         document.getElementById('name').value = item.name;
         document.getElementById('quantity').value = item.quantity;
-        document.getElementById('price').value = item.price;
+        document.getElementById('sku').value = item.sku;
         document.getElementById('personInCharge').value = item.personInCharge;
 
         formTitle.innerText = 'Edit Item';
@@ -84,7 +99,7 @@ async function replenishItem(id) {
     const quantity = prompt(`Replenish ${item.name} from Store Room. Enter quantity to add:`);
     if (quantity === null || quantity === "") return;
 
-    const person = prompt(`Enter Person responsible for this replenishment:`, item.personInCharge);
+    const person = prompt(`Enter Person responsible for this replenishment:`, currentUser.name);
     if (person === null || person === "") return;
 
     const response = await fetch(`/api/items/${id}/replenish`, {

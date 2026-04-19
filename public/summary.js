@@ -1,4 +1,19 @@
 const summaryTbody = document.getElementById('summary-tbody');
+const logoutBtn = document.getElementById('logout-btn');
+const displayName = document.getElementById('display-name');
+
+// Check login status
+const currentUser = JSON.parse(localStorage.getItem('inventory_user'));
+if (!currentUser) {
+    window.location.href = 'login.html';
+} else {
+    displayName.innerText = `Welcome, ${currentUser.name}`;
+}
+
+logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('inventory_user');
+    window.location.href = 'login.html';
+});
 
 async function fetchSummary() {
     try {

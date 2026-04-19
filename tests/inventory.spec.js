@@ -3,43 +3,46 @@ const { test, expect } = require('@playwright/test');
 test.describe.configure({ mode: 'serial' });
 
 test.describe('Inventory Management App', () => {
-  test.beforeAll(async () => {
-      // Server is assumed to be running
-  });
-
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/login.html');
+    await page.fill('#username', 'admin');
+    await page.fill('#password', 'password');
+    await page.click('#submit-btn');
+    await expect(page).toHaveURL(/index.html/);
   });
 
   test('should display initial items', async ({ page }) => {
     const rows = page.locator('#inventory-tbody tr');
-    await expect(rows).toHaveCount(2);
-    await expect(rows.first()).toContainText('Item A');
+    // Multiple tests might have added items if they share the same server instance
+    const count = await rows.count();
+    expect(count).toBeGreaterThanOrEqual(2);
   });
 
   test('should add a new item', async ({ page }) => {
+    const initialRows = page.locator('#inventory-tbody tr');
+    const initialCount = await initialRows.count();
+
     await page.fill('#name', 'Playwright Item');
     await page.fill('#quantity', '20');
-    await page.fill('#price', '15.99');
+    await page.fill('#sku', 'SKU-PW');
     await page.click('#submit-btn');
 
     const rows = page.locator('#inventory-tbody tr');
-    await expect(rows).toHaveCount(3);
+    await expect(rows).toHaveCount(initialCount + 1);
     await expect(page.locator('#inventory-tbody')).toContainText('Playwright Item');
   });
 
   test('should edit an item', async ({ page }) => {
-    // Edit the second item (ID 2: Item B)
-    const editBtn = page.locator('button.edit-btn').nth(1);
+    const editBtn = page.locator('button.edit-btn').first();
     await editBtn.click();
 
-    await page.fill('#name', 'Updated Item B');
-    await page.fill('#quantity', '50');
+    await page.fill('#name', 'Updated First Item');
+    await page.fill('#quantity', '55');
     await page.click('#submit-btn');
 
     const rows = page.locator('#inventory-tbody tr');
-    await expect(rows.nth(1)).toContainText('Updated Item B');
-    await expect(rows.nth(1)).toContainText('50');
+    await expect(rows.first()).toContainText('Updated First Item');
+    await expect(rows.first()).toContainText('55');
   });
 
   test('should delete an item', async ({ page }) => {
@@ -47,8 +50,8 @@ test.describe('Inventory Management App', () => {
         await dialog.accept();
     });
 
-    // Initial count might be 3 if "add" ran before
-    const initialCount = await page.locator('#inventory-tbody tr').count();
+    const rows = page.locator('#inventory-tbody tr');
+    const initialCount = await rows.count();
 
     const deleteBtn = page.locator('button.delete-btn').first();
     await deleteBtn.click();

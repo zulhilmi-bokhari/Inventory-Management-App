@@ -4,13 +4,17 @@ test.describe.configure({ mode: 'serial' });
 
 test.describe('Inventory and Replenishment', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000/login.html');
+    await page.fill('#username', 'admin');
+    await page.fill('#password', 'password');
+    await page.click('#submit-btn');
+    await expect(page).toHaveURL(/index.html/);
   });
 
   test('should handle Person in Charge when adding item', async ({ page }) => {
     await page.fill('#name', 'Charlie Item');
     await page.fill('#quantity', '10');
-    await page.fill('#price', '5.00');
+    await page.fill('#sku', 'SKU-C');
     await page.fill('#personInCharge', 'Charlie');
     await page.click('#submit-btn');
 
@@ -18,15 +22,15 @@ test.describe('Inventory and Replenishment', () => {
     await expect(row).toContainText('Charlie');
   });
 
-  test('should perform replenishment and show in summary', async ({ page, context }) => {
+  test('should perform replenishment and show in summary', async ({ page }) => {
     // 1. Add an item
     await page.fill('#name', 'Store Room Item');
     await page.fill('#quantity', '10');
+    await page.fill('#sku', 'SKU-SR');
     await page.fill('#personInCharge', 'Dave');
     await page.click('#submit-btn');
 
     // 2. Replenish it
-    // Handle prompts
     page.on('dialog', async dialog => {
       if (dialog.message().includes('quantity to add')) {
         await dialog.accept('25');

@@ -9,12 +9,31 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Hardcoded users for basic login
+const users = [
+  { username: 'admin', password: 'password', name: 'System Admin' },
+  { username: 'alice', password: 'password123', name: 'Alice' },
+  { username: 'bob', password: 'password456', name: 'Bob' }
+];
+
 let inventory = [
-  { id: 1, name: 'Item A', quantity: 10, price: 5.0, personInCharge: 'Alice' },
-  { id: 2, name: 'Item B', quantity: 5, price: 10.0, personInCharge: 'Bob' }
+  { id: 1, name: 'Item A', quantity: 10, sku: 'SKU-001', personInCharge: 'Alice' },
+  { id: 2, name: 'Item B', quantity: 5, sku: 'SKU-002', personInCharge: 'Bob' }
 ];
 let replenishments = [];
 let nextId = 3;
+
+// Login endpoint
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  const user = users.find(u => u.username === username && u.password === password);
+  if (user) {
+    const { password, ...userWithoutPassword } = user;
+    res.json(userWithoutPassword);
+  } else {
+    res.status(401).json({ error: 'Invalid username or password' });
+  }
+});
 
 // GET all items
 app.get('/api/items', (req, res) => {
@@ -23,15 +42,15 @@ app.get('/api/items', (req, res) => {
 
 // POST a new item
 app.post('/api/items', (req, res) => {
-  const { name, quantity, price, personInCharge } = req.body;
-  if (!name || quantity === undefined) {
-    return res.status(400).json({ error: 'Name and quantity are required' });
+  const { name, quantity, sku, personInCharge } = req.body;
+  if (!name || quantity === undefined || !sku) {
+    return res.status(400).json({ error: 'Name, quantity, and SKU are required' });
   }
   const newItem = {
     id: nextId++,
     name,
     quantity: parseInt(quantity),
-    price: price ? parseFloat(price) : 0,
+    sku,
     personInCharge: personInCharge || 'Unassigned'
   };
   inventory.push(newItem);
@@ -41,7 +60,7 @@ app.post('/api/items', (req, res) => {
 // PUT (update) an item
 app.put('/api/items/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const { name, quantity, price, personInCharge } = req.body;
+  const { name, quantity, sku, personInCharge } = req.body;
   const itemIndex = inventory.findIndex(item => item.id === id);
   if (itemIndex === -1) {
     return res.status(404).json({ error: 'Item not found' });
@@ -50,7 +69,7 @@ app.put('/api/items/:id', (req, res) => {
     ...inventory[itemIndex],
     name: name || inventory[itemIndex].name,
     quantity: quantity !== undefined ? parseInt(quantity) : inventory[itemIndex].quantity,
-    price: price !== undefined ? parseFloat(price) : inventory[itemIndex].price,
+    sku: sku || inventory[itemIndex].sku,
     personInCharge: personInCharge || inventory[itemIndex].personInCharge
   };
   inventory[itemIndex] = updatedItem;
